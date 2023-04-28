@@ -49,10 +49,10 @@ export default class Container extends React.Component {
              ))}            
         </Drawer>)
     }
-
+    
     header = () => {
-        return (
-            <Box sx={{ flexGrow: 1 }} style={{height: "10vh"}}>
+        return (            
+            <Box sx={{ flexGrow: 1 }} style={{height: "10vh"}}>                
                 <AppBar position="static">
                     <Toolbar>
                         <IconButton
