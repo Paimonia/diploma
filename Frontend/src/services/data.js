@@ -74,6 +74,11 @@ const DataService = {
     // удалить упражнение по id
     exercisedelete(id) {
         return instance.delete(`/exercise/${id}`)
+    },
+
+    // удалить тренировку по id
+    trainingdelete(id) {
+        return instance.delete(`/training/${id}`)
     }
 }
 

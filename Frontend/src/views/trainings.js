@@ -30,6 +30,15 @@ export default class Trainings extends React.Component {
         this.uploadData()        
     }
 
+    deleteTraining = (id) => {
+        DataService.trainingdelete(id).then((r) => {            
+            alert('Тренировка успешно удалена')
+            this.uploadData()
+        }, (error) => {                
+            alert(error.response?.data?.error || error.message)
+        });        
+    }
+
     uploadData = () => {
         DataService.trainingsavailable(AuthService.userId, this.state.filter, this.state.order).then((r) => {                        
             this.setState({ trainings: r.data });
