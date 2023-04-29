@@ -111,7 +111,6 @@ router.delete('/exercise/:id', async (req, res) => {
       error: error.message
     })
   }  
-
 })
 
 // создать или обновить упражнение
