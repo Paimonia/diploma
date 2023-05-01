@@ -82,10 +82,10 @@ const createorupdate = async (req, res, id) => {
       where: { id : id}
     })   
 
-    // удаляю привязки к словарикам (они будут пересозданы)
-    /*await dbTrainingsDictionaries.destroy({
-      where: { exercise_id: id }
-    })*/
+    // удаляю привязки к тренировкам (они будут пересозданы)
+    await dbTrainingsExercises.destroy({
+      where: { training_id: id }
+    })
 
   } else
   {
@@ -95,8 +95,11 @@ const createorupdate = async (req, res, id) => {
       description: req.body.description,
       repeat_count: +req.body.repeat_count ?? 1,
       repeat_rest_time: +req.body.repeat_rest_time ?? 60,
-      user_id: req.body.user_id
+      user_id: req.body.user_id,
+      creation_date: new Date()
     })  
+
+    id = training.id
   }
 
   // привязываю к упражнению проставленные флаги/checkbox'ы      
@@ -113,6 +116,20 @@ const createorupdate = async (req, res, id) => {
       }
     })    
 */
+
+  // создаю список упражнений
+  console.log(req.body.exercises)
+  req.body.exercises.forEach(async (e, i) =>  {
+    console.log(id)
+    await dbTrainingsExercises.create({
+      training_id: id,
+      exercise_id: e.id,
+      work_time: e.work_time,
+      worked_time: 0,
+      order: i,
+      completion_rest_time: e.completion_rest_time
+    })
+  });
 
   // сохраняю файл изображение (растр)
   if (req.body.file) {

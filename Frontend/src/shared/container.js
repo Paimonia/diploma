@@ -114,7 +114,7 @@ export default class Container extends React.Component {
             <div>
                 {this.sidebar()}
                 {this.header()}
-                <div style={{height: "80vh"}}>
+                <div style={{height: "80vh", padding: "10px"}}>
                     {this.props.children}
                 </div>
                 {this.footer()}
