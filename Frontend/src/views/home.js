@@ -1,15 +1,22 @@
 import React from 'react'
+import Grid from '@mui/material/Grid'
 
 export default class Home extends React.Component {
     render() {
         return (
-            <div>
-                <h1>FitMe - ваш лучший помощник в мире фитнесса</h1>            
-                <p>
-                Lorem ipsum dolor sit amet. Qui saepe nisi non natus suscipit hic recusandae quis eum galisum possimus ut laudantium obcaecati. Est modi nesciunt sed doloremque voluptas ut beatae voluptatem est dignissimos ipsa eum excepturi maiores. 
-                Eos explicabo sint sit numquam minima et earum quae aut nesciunt aspernatur et amet reiciendis sit consequatur veritatis! Et architecto enim ut rerum commodi et tenetur unde est dignissimos quidem ut consequatur doloremque sit quas dolore eos quae earum.
-Eos galisum repellendus aut iure nostrum ut nostrum adipisci et accusamus omnis. Qui ratione nemo ea voluptatibus totam est quia voluptate sit labore ducimus.
-                </p>
+            <div style={{padding: 10}}>
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    <Grid item xs={6}>
+                        <h1>FitMe - ваш лучший помощник в мире фитнесса</h1>
+                        <h3>
+                            FitMe обеспечивает поддержку и мотивацию, необходимые людям для достижения своих целей в области хорошего самочувствия и контроля над своим здоровьем - в любое время, в любом месте, в любом возрасте, с любым уровнем опыта. Фитнес, осознанность, профилактика
+                        </h3>
+                    </Grid>
+                    <Grid item xs={6}  > 
+                        <img src="/fitme-female.avif" width="100%" height="auto" alt="fitme female" />                                           
+                    </Grid>
+                </Grid>
+              
             </div>
         )
     }
