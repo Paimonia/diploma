@@ -111,7 +111,7 @@ export default class Container extends React.Component {
 
     render() {
         return (
-            <div>
+            <div style={{padding: 10}}>
                 {this.sidebar()}
                 {this.header()}
                 <div style={{height: "80vh", padding: "10px"}}>
