@@ -7,7 +7,7 @@ const fs = require('fs')
 
 router.get('/exercise/:id', async (req, res) => {
   try {
-      // проверяю, есть ли такой пользователь перед созданием
+      // проверяю, есть ли такоe упражнение
       const exercise = await dbExercises.findOne({
         where:  {
           id: req.params.id

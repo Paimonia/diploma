@@ -33,6 +33,10 @@ const dbTrainings = db.define('trainings',
     creation_date: {
       type: DataTypes.DATE,
       allowNull: true
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   },
   // Опции

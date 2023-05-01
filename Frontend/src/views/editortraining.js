@@ -27,10 +27,7 @@ class EditorTraining extends React.Component {
                 repeat_count: 1,
                 repeat_rest_time: 60,          
                 file: '',
-                exercises: [
-                    { id: 1, work_time: 40, completion_rest_time: 20 }, 
-                    { id: 2, work_time: 30, completion_rest_time: 20 }
-                ] 
+                exercises: [] 
             },
             dic1: [],
             dic2: [],
@@ -41,7 +38,8 @@ class EditorTraining extends React.Component {
             totalTime: 70
         }
 
-        this.isNew = this.props.params.id === undefined                
+        this.trainingId = this.props.params.id
+        this.isNew = this.trainingId === undefined                
     }
 
     componentDidMount() {
@@ -56,8 +54,8 @@ class EditorTraining extends React.Component {
             
             let totalCalories = 0
             this.state.formData.exercises.forEach(e => {
-                const fullInfo = this.state.exercises?.find(x => x.id === e.id)                                
-                totalCalories += fullInfo.calories_per_hour * (e.work_time / 3600)
+                const fullInfo = this.state.exercises?.find(x => x.id === e.exercise_id)                                
+                totalCalories += fullInfo?.calories_per_hour * (e.work_time / 3600)
             })
 
             totalCalories = Math.floor(totalCalories)
@@ -89,8 +87,7 @@ class EditorTraining extends React.Component {
 
     // загрузка данных
     uploadData = () => {
-        // const trainingId = this.props.params.id
-
+    
         // получаю список доступных упражнений
         DataService.exercisesavailable(AuthService.userId, '', 'asc').then((r) => {            
             this.setState({ 
@@ -111,22 +108,13 @@ class EditorTraining extends React.Component {
                             return;
                         }
                         
-                     /*   DataService.training(exerciseId).then(e => {
-                            const d = e.data
-                            const fd = { 
-                                title: d.title, 
-                                description: d.description,
-                                calories_per_hour: d.calories_per_hour                            
-                            }
-                            d.dicRefs.forEach(x => {
-                                fd["dic" + x] = 'on'
-                            })
-
-                            this.setState({ formData : fd})
+                        DataService.training(this.trainingId).then(e => {
+                            const formData = e.data
+                            this.setState({formData})
                         }, (error) => {                
                             alert(error.response?.data?.error || error.message)
                         });
-                        */
+                        
                 });
             });            
             
@@ -155,7 +143,7 @@ class EditorTraining extends React.Component {
 
     handleAddExercise = (event) => {
         const formData = {...this.state.formData}        
-        formData.exercises.push({id: this.state.selectedExerciseId, work_time: 1, completion_rest_time: 1 })
+        formData.exercises.push({exercise_id: this.state.selectedExerciseId, work_time: 1, completion_rest_time: 1 })
         this.setState({ formData })        
     }
 
@@ -303,21 +291,23 @@ class EditorTraining extends React.Component {
                                 </Grid>                               
                             </Grid>
 
-                            <Grid container spacing={2}>                                
-                                <Grid item xs={3}>                                    
+                            {this.state.formData.exercises?.length !== 0 &&
+                                <Grid container spacing={2}>                                
+                                    <Grid item xs={3}>                                    
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <h3>Время</h3>
+                                    </Grid>
+                                    <Grid item xs={3}>                                    
+                                        <h3>Отдых</h3>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={3}>
-                                    <h3>Время</h3>
-                                </Grid>
-                                <Grid item xs={3}>                                    
-                                    <h3>Отдых</h3>
-                                </Grid>
-                            </Grid>
+                            }
                             
                             {this.state.formData.exercises?.length === 0 && <h1>У вас пока нет упражнений :(</h1>}
 
                             {this.state.formData.exercises.map((e, i) => {
-                                    const exercise = this.state.exercises?.find(s => s.id === e.id)
+                                    const exercise = this.state.exercises?.find(s => s.id === e.exercise_id)
                                     return <Grid container xs={12}>
                                             <Grid item xs={3}>                                        
                                                 <h3>{exercise?.title}</h3>

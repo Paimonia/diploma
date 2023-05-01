@@ -6,6 +6,46 @@ const dbTrainingsExercises = require('./models/trainingsexercises')
 const { Op } = require('sequelize')
 const fs = require('fs')
 
+
+// получить тренировку по id
+router.get('/training/:id', async (req, res) => {
+  try {
+      // проверяю, есть ли такая тренировка
+      const training = await dbTrainings.findOne({
+        where:  {
+          id: req.params.id
+        }
+      })
+
+      if (!training) {
+        res.status(404).json({
+          error: "Тренировка не найдена"
+        })
+        return
+      }
+
+      // подгружаю привязанные упражнения               
+      const conditions =  {
+        where: {
+          training_id: req.params.id
+        }
+      }
+  
+      const exercises = await dbTrainingsExercises.findAll(conditions)        
+      const fulltraining = {...training.dataValues, exercises: [] }
+      exercises.map(e => fulltraining.exercises.push(e))
+      
+      res.status(200).json(
+        fulltraining
+      )
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  } 
+})
+
 // получить список тренировок пользователя
 router.get('/training/available/:id', async (req, res) => {
     try {
@@ -123,7 +163,7 @@ const createorupdate = async (req, res, id) => {
     console.log(id)
     await dbTrainingsExercises.create({
       training_id: id,
-      exercise_id: e.id,
+      exercise_id: e.exercise_id,
       work_time: e.work_time,
       worked_time: 0,
       order: i,

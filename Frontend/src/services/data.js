@@ -66,6 +66,11 @@ const DataService = {
         return instance.get(`/exercise/${id}`)
     },
 
+    // получить тренировку по id
+    training(id) {
+        return instance.get(`/training/${id}`)
+    },
+
     // получить список записей в словаре
     dictionary(typeid) {
         return instance.get(`/dictionary/${typeid}`)
