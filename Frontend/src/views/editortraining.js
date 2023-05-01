@@ -56,7 +56,7 @@ class EditorTraining extends React.Component {
             
             let totalCalories = 0
             this.state.formData.exercises.forEach(e => {
-                const fullInfo = this.state.exercises.find(x => x.id === e.id)                                
+                const fullInfo = this.state.exercises?.find(x => x.id === e.id)                                
                 totalCalories += fullInfo.calories_per_hour * (e.work_time / 3600)
             })
 
