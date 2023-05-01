@@ -1,17 +1,17 @@
 import React from 'react'
-import withRouter from './withrouter';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
-import InputLabel from '@mui/material/InputLabel';
+import withRouter from './withrouter'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+import PhotoCamera from '@mui/icons-material/PhotoCamera'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
+import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator'
+import InputLabel from '@mui/material/InputLabel'
 import { TextField } from '@mui/material'
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import Link from '@mui/material/Link';
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import Link from '@mui/material/Link'
 
 import DataService from '../services/data.js'
 import AuthService from '../services/auth.js'
@@ -407,7 +407,7 @@ class EditorTraining extends React.Component {
                     </ValidatorForm>
                 </Grid>
                 
-                <Grid container spacing={2} style={{ minHeight: '10vh' }}>
+                <Grid container style={{ minHeight: '10vh' }}>
                 </Grid>
 
             </Grid>   
