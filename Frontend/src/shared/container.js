@@ -61,7 +61,7 @@ export default class Container extends React.Component {
                             edge="start"
                             color="inherit"
                             aria-label="menu"
-                            sx={{ mr: 2 }}
+                            sx={{ display: { xs: 'block', md: 'none' }}} 
                         >
                             <MenuIcon />
                         </IconButton>                    
@@ -75,7 +75,7 @@ export default class Container extends React.Component {
                                     component={Link}
                                     to={page.link}
                                     key={page.title}                                
-                                    sx={{ my: 2, color: 'white', display: 'block' }}
+                                    sx={{ my: 2, color: 'white', display: { xs: 'none', md: 'block' } }}                 
                                 >
                                     {page.title}
                                 </Button>                          
