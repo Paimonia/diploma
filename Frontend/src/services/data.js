@@ -41,6 +41,11 @@ const DataService = {
         return instance.get(`/training/available/${userid}?filter=${filter}&order=${order}`)
     },
 
+    // получить список запланированных тренировок
+    trainingsplanned(userid, startDate, endDate) {
+        return instance.get(`/training/planned/${userid}?startDate=${startDate}&endDate=${endDate}`)
+    },
+
     // создать новое упражнение
     exercisecreate(userid, data) {
         return instance.post(`/exercise/`, {...data, user_id: userid})

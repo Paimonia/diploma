@@ -39,34 +39,40 @@ export default class HomeUser extends React.Component {
             startDate: dayjs(Date.now()),
             currentDate: dayjs(Date.now()),
             endDate: dayjs(Date.now()).add(7, 'day'),
-            trainings: [{
-                id: 1,
-                user_id: 24,
-                start_date: '',                              
-                name: 'Кардио тренировка',
-                progress: 80
-            }, {
-                id: 12,
-                user_id: 24,
-                start_date: '',
-                name: 'Силовая тренировка',
-                progress: 0
-            }],
-            trainingsavailable: [{
-                    id: 1,
-                    name: 'Кардио тренировка'
-                },
-                {
-                    id: 2,
-                    name: 'Силовая тренировка'
-                }],
+            trainings: [],
+            trainingsavailable: [],
             selectedTrainingId: 1,
             addTrainingModalIsOpen: false
         }
     }
 
     uploadData = () => {
+        // запрашиваю список запланированных тренировок
+        DataService.trainingsplanned(AuthService.userId, this.state.startDate, this.state.endDate).then((r) => {  
+            const trainings = r.data
+            trainings.forEach(t => {
+                t.progress = 50 // TODO добавить реалистичный расчёт готовности
+            })                                 
+            this.setState({ 
+                trainings: r.data 
+            });
+        }, (error) => {                
+            alert(error.response?.data?.error || error.message)
+        });  
 
+        // запрашиваю список доступных тренировок
+        DataService.trainingsavailable(AuthService.userId, '', 'desc').then((r) => {                                  
+            this.setState({ 
+                trainingsavailable: r.data,
+                selectedTrainingId: r.data.length >= 0 ? r.data[0].id : 1 
+            });
+        }, (error) => {                
+            alert(error.response?.data?.error || error.message)
+        });  
+    }
+
+    componentDidMount() {
+        this.uploadData()
     }
 
     handleStartDateChange = (value) => {
@@ -123,7 +129,7 @@ export default class HomeUser extends React.Component {
                         <h1>Календарь</h1>            
                     </Grid>
                     <Grid item xs="12">
-                        <Button variant="contained" sx={{m: 2}}>Показать</Button>
+                        <Button variant="contained" sx={{m: 2}} onClick={() => this.uploadData()}>Показать</Button>
                         <DatePicker value={this.state.startDate} onChange={this.handleStartDateChange}/>&nbsp;—&nbsp;
                         <DatePicker value={this.state.endDate} onChange={this.handleEndDateChange}/>                                                
                     </Grid>
