@@ -6,7 +6,6 @@ const dbTrainingsExercises = require('./models/trainingsexercises')
 const { Op } = require('sequelize')
 const fs = require('fs')
 
-
 // получить тренировку по id
 router.get('/training/:id', async (req, res) => {
   try {
@@ -189,6 +188,78 @@ const createorupdate = async (req, res, id) => {
   }
 }
 
+// внести тренировку в план тренировок
+router.post('/training/plan',  async (req, res) => {
+  try {
+       
+    const trainingid = req.body.trainingid
+    // необходимо клонировать тренировку и заполнить ей start_date
+    // запрашиваю тренировку и её упражнения
+    const training = await dbTrainings.findOne({
+      where:  {
+        id: trainingid
+      }
+    })
+
+    if (!training) {
+      res.status(404).json({
+        error: "Тренировка не найдена"
+      })
+      return
+    }
+
+    // создаю новую тренировку (клонируя выбранную в качестве шаблона и заполняя дату начала)
+    const clonetraining = await dbTrainings.create({
+      name: training.dataValues.name,
+      description: training.dataValues.description,
+      repeat_count: training.dataValues.repeat_count,
+      repeat_rest_time: training.dataValues.repeat_rest_time,
+      user_id: training.dataValues.user_id,
+      creation_date: new Date(),
+      start_date: req.body.date
+    })  
+
+    const clonedtrainingid = clonetraining.dataValues.id
+    
+    // клонирую упражнения
+    // подгружаю привязанные упражнения               
+    const conditions =  {
+      where: {
+        training_id: trainingid
+      }
+    }
+
+    const exercises = await dbTrainingsExercises.findAll(conditions)
+
+    exercises.forEach(async (e, i) => {
+      // клонирую упражнение
+      await dbTrainingsExercises.create({
+        training_id: clonedtrainingid,
+        exercise_id: e.dataValues.exercise_id,
+        work_time: e.dataValues.work_time,
+        worked_time: 0,
+        order: i,
+        completion_rest_time: e.dataValues.completion_rest_time
+      })
+    })
+
+    // клонирую изображение тренировки
+    const trainingFile = __dirname + `\\images\\trainings\\${trainingid}.jpg`
+    if (fs.existsSync(trainingFile)) {
+      const clonedtrainingFile = __dirname + `\\images\\trainings\\${clonedtrainingid}.jpg`
+      fs.copyFileSync(trainingFile, clonedtrainingFile)
+    }
+
+    res.status(201).json(
+      {}
+    )
+  } catch (error) {
+    console.error(error.message)
+    res.status(500).json({
+      error: error.message
+    })
+  }  
+})
 
 // создать новую тренировку
 router.post('/training', async (req, res) => {

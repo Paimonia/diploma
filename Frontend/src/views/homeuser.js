@@ -90,8 +90,16 @@ export default class HomeUser extends React.Component {
     }
     
     addTraining = () => {
-        alert('Тренировка БУДЕТ добавлена')
-        this.handleClose()
+        DataService.trainingplanforuser(
+            AuthService.userId, 
+            this.state.selectedTrainingId, 
+            new Date(this.state.currentDate)).then(e => {
+                alert('Тренировка была добавлена в календарь пользователя')
+                this.handleClose()
+            }, (error) => {  
+                alert(error.response?.data?.error || error.message)
+                this.handleClose()
+            });
     }
 
     handleTrainingChange = (event) => {        

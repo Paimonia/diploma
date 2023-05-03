@@ -51,6 +51,11 @@ const DataService = {
         return instance.post(`/training/`, {...data, user_id: userid})
     },
 
+    // запланировать  тренировку для пользователя
+    trainingplanforuser(userid, trainingid, date) {
+        return instance.post(`/training/plan`, {userid, trainingid, date})
+    },
+
     // обновить существующее упражнение
     exerciseupdate(userid, id, data) {
         return instance.put(`/exercise/${id}`, {...data, user_id: userid})

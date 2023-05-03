@@ -4,7 +4,7 @@ const AuthService = {
 
     // id авторизованного пользователя
     get userId() {
-        return localStorage.getItem('userId')
+        return +localStorage.getItem('userId')
     },
 
     // авторизация
