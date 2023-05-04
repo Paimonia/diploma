@@ -39,7 +39,7 @@ export default class HomeUser extends React.Component {
             startDate: dayjs(Date.now()),
             currentDate: dayjs(Date.now()),
             endDate: dayjs(Date.now()).add(7, 'day'),
-            trainings: [],
+            trainings: undefined,
             trainingsavailable: [],
             selectedTrainingId: 1,
             addTrainingModalIsOpen: false
@@ -47,6 +47,7 @@ export default class HomeUser extends React.Component {
     }
 
     uploadData = () => {
+        
         // запрашиваю список запланированных тренировок
         DataService.trainingsplanned(AuthService.userId, this.state.startDate, this.state.endDate).then((r) => {  
             const trainings = r.data
@@ -58,7 +59,7 @@ export default class HomeUser extends React.Component {
             });
         }, (error) => {                
             alert(error.response?.data?.error || error.message)
-        });  
+        })
 
         // запрашиваю список доступных тренировок
         DataService.trainingsavailable(AuthService.userId, '', 'desc').then((r) => {                                  
@@ -130,18 +131,18 @@ export default class HomeUser extends React.Component {
                     </Grid>
                     <Grid item xs="12">
                         <Button variant="contained" sx={{m: 2}} onClick={() => this.uploadData()}>Показать</Button>
-                        <DatePicker value={this.state.startDate} onChange={this.handleStartDateChange}/>&nbsp;—&nbsp;
-                        <DatePicker value={this.state.endDate} onChange={this.handleEndDateChange}/>                                                
+                        <DatePicker value={this.state.startDate} onChange={this.handleStartDateChange} format="DD.MM.YYYY"/>&nbsp;—&nbsp;
+                        <DatePicker value={this.state.endDate} onChange={this.handleEndDateChange} format="DD.MM.YYYY"/>                                                
                     </Grid>
                 </Grid>
 
-                {this.state.trainings.length === 0 && 
+                {this.state.trainings?.length === 0 && 
                     <Grid container>
                         <h1>У вас пока нет тренировок</h1>
                     </Grid>}
 
                 <Grid container spacing={2}>
-                {this.state.trainings.map(t => { return (
+                {this.state.trainings?.map(t => { return (
                     <Grid item xs={4}>
                         <Card>
                             <CardMedia                       
@@ -151,10 +152,13 @@ export default class HomeUser extends React.Component {
                             />
                             <CardContent>
                                 <Grid container>
-                                    <Grid item xs={12}>                                            
+                                    <Grid item xs={8}>                                            
                                         <Typography variant="h5" color="text.primary">
                                             {t.name}
                                         </Typography>   
+                                    </Grid>
+                                    <Grid item xs={4} container justifyContent="flex-end">                                            
+                                            {new Date(t.start_date).toLocaleDateString("ru-RU")}
                                     </Grid>
                                     <Grid item xs={12}>
                                         <LinearProgress variant="buffer" value={t.progress} />
@@ -165,7 +169,7 @@ export default class HomeUser extends React.Component {
                             <CardActions>
                                 {t.user_id && <Button size="small" onClick={() => this.deleteTraining(t.id)}>Удалить</Button>}
                                 {t.user_id && <Button size="small" component={Link} to={"/training/execute/" + t.id}>Продолжить</Button>}
-                            </CardActions>
+                            </CardActions>                            
                         </Card>
 
                     </Grid>
