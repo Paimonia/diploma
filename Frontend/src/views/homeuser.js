@@ -51,8 +51,10 @@ export default class HomeUser extends React.Component {
         // запрашиваю список запланированных тренировок
         DataService.trainingsplanned(AuthService.userId, this.state.startDate, this.state.endDate).then((r) => {  
             const trainings = r.data
-            trainings.forEach(t => {
-                t.progress = 50 // TODO добавить реалистичный расчёт готовности
+            trainings.forEach(t => {                
+                const worktime = t.exercises?.reduce((a, b) => a + b.work_time, 0)
+                const workedtime = t.exercises?.reduce((a, b) => a + b.worked_time, 0)                
+                t.progress = workedtime * 100 / worktime
             })                                 
             this.setState({ 
                 trainings: r.data 
