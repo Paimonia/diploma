@@ -11,6 +11,7 @@ app.use(cors())
 app.use(bodyParser.json({limit: '70mb'}))
 
 app.use("/images", express.static('images'))
+app.use("/videos", express.static('videos'))
 app.use(userrouter)
 app.use(exerciserouter)
 app.use(dictionaryrouter)
