@@ -13,8 +13,10 @@ import Contacts from './views/contacts'
 import Profile from './views/profile'
 import EditorExercise from './views/editorexercise'
 import EditorTraining from './views/editortraining'
+import TrainingExecute from './views/trainingexecute'
 
 import Container from './shared/container'
+
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -35,6 +37,7 @@ function App() {
           <Route path="/profile" element={<Container><Profile /></Container>}/>
           <Route path="/exercise/edit/:id?" element={<Container><EditorExercise /></Container>} />
           <Route path="/training/edit/:id?" element={<Container><EditorTraining /></Container>} />
+          <Route path="/training/execute/:id?" element={<Container><TrainingExecute /></Container>} />
         </Routes>
       </Router>
     </React.StrictMode>

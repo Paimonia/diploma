@@ -1,5 +1,5 @@
 import React from 'react'
-import withRouter from './withrouter';
+import withRouter from '../shared/withrouter';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
