@@ -18,10 +18,82 @@ class TrainingExecute extends React.Component {
             currentexercise: undefined,
             nextexercise: undefined,
             repeat_count: 1,
-            isResting: false         
+            isResting: false,
+            timerId: undefined,
+            timerPaused: false,
+            restTimeLeft: 0,
+            isComplete: false    
         }
         
         this.trainingId =  this.props.params.id 
+    }
+
+    // запуск тренировки
+    startTimer = () => {
+        const timerId = setInterval(() => {
+            if (this.state.timerPaused) {
+                return
+            }
+
+            let {isComplete, nextexercise, currentexercise, currenttrainingexercise, isResting, restTimeLeft} = {...this.state}
+            if (isResting) {
+                // идёт отдых
+                restTimeLeft--;
+                if (restTimeLeft <= 0) {
+                    // перехожу к следующему упражнению 
+                    restTimeLeft = 0                    
+                    let i = this.state.training.exercises.indexOf(currenttrainingexercise)
+                    if (i < this.state.training.exercises.length - 1) {
+                        currenttrainingexercise = this.state.training.exercises[++i]
+                        nextexercise = i + 1 < this.state.training.exercises.length ? this.state.training.exercises[i + 1] : undefined
+                        currentexercise = this.state.exercises.find(e => e.id === currenttrainingexercise.exercise_id)
+                        isResting = false
+                    } else {
+                        isComplete = true
+                    }
+                }
+            } else 
+            {
+                // фаза выполнения упражнения 
+                if (currenttrainingexercise.worked_time++ >= currenttrainingexercise.work_time) {
+                    currenttrainingexercise.worked_time = currenttrainingexercise.work_time
+                    isResting = true
+                    restTimeLeft = currenttrainingexercise.completion_rest_time
+                }
+            }
+
+            this.setState({isComplete, nextexercise, currentexercise, currenttrainingexercise, isResting, restTimeLeft})
+
+        }, 1000)
+
+        this.setState({timerId, timerPaused: false})
+    }
+
+    // остановить таймер тренировки
+    stopTimer = () => {
+        clearInterval(this.state.timerId)
+        const training = this.state.training
+        training.exercises.forEach(e => {
+            e.worked_time = 0            
+        })
+
+        const fte = training.exercises.length >= 0 ? training.exercises[0] : undefined  
+        const nte = training.exercises.length >= 1 ? training.exercises[1] : undefined 
+
+        this.setState({
+            timerId: undefined, 
+            timerPaused: true,
+            currenttrainingexercise : fte,
+            currentexercise : this.state.exercises.find(e => e.id === fte?.exercise_id),
+            nextexercise : this.state.exercises.find(e => e.id === nte?.exercise_id),                          
+            training,
+            isResting: false })
+    }
+
+    // пауза таймера тренировки
+    pauseTimer = () => {
+        const timerPaused = !this.state.timerPaused
+        this.setState({timerPaused})
     }
 
     componentDidMount() {
@@ -36,7 +108,6 @@ class TrainingExecute extends React.Component {
         Promise.all([p1, p2]).then((values) => {
             this.setState({ exercises: values[0].data }, () => {
                 this.setState({ training: values[1].data }, () => {
-                    alert(JSON.stringify(this.state))
                     const fte = this.state.training.exercises.length >= 0 ? this.state.training.exercises[0] : undefined  
                     const nte = this.state.training.exercises.length >= 1 ? this.state.training.exercises[1] : undefined 
                     this.setState({
@@ -107,7 +178,8 @@ class TrainingExecute extends React.Component {
                         <p>{this.state.currentexercise?.description}</p>
                         <Grid container>
                             <Grid item xs="8">
-                                <h2>Осталось {this.state.currenttrainingexercise?.work_time - this.state.currenttrainingexercise?.worked_time} сек.</h2>                                                
+                                {!this.state.isResting && !this.state.isComplete && <h2>Осталось {this.state.currenttrainingexercise?.work_time - this.state.currenttrainingexercise?.worked_time} сек.</h2>}                                              
+                                {this.state.isResting && !this.state.isComplete && <h2>Отдыхаем {this.state.restTimeLeft} сек.</h2>}                                                                              
                                 <ReactPlayer 
                                             width='90%' 
                                             loop='true'
@@ -115,22 +187,23 @@ class TrainingExecute extends React.Component {
                                             playsinline='true' 
                                             url={this.state.currentexercise? `http://localhost:4000/videos/exercises/${this.state.currentexercise.id}.mp4` : ''} 
                                 />
+                                {this.state.isComplete && <h2>Поздравляем, тренировка завершена!</h2>}
                             </Grid>
-                            <Grid item xs="4">
+                            {this.state.nextexercise && <Grid item xs="4">
                                 <h2>Следующее упражнение</h2>
                                 <ReactPlayer 
                                             width='90%' 
                                             playsinline='false' 
-                                            url={this.state.nextexercise? `http://localhost:4000/videos/exercises/${this.state.nextexercise.id}.mp4` : ''} 
+                                            url={`http://localhost:4000/videos/exercises/${this.state.nextexercise.id}.mp4`} 
                                 />
-                            </Grid>
+                            </Grid>}
                         </Grid>
                     </Grid>}
                 </Grid>
                 <Grid container>
-                    <Button variant="contained">СТАРТ</Button>&nbsp;
-                    <Button variant="contained">СТОП</Button>&nbsp;
-                    <Button variant="contained">ПАУЗА</Button>                    
+                    <Button variant="contained" disabled={this.state.timerId} onClick={this.startTimer}>СТАРТ</Button>&nbsp;
+                    <Button variant="contained" disabled={!this.state.timerId} onClick={this.stopTimer}>СТОП</Button>&nbsp;
+                    <Button variant="contained" disabled={!this.state.timerId} onClick={this.pauseTimer}>{this.state.timerPaused && this.state.timerId ? 'ПРОДОЛЖИТЬ' : 'ПАУЗА'}</Button>                    
                 </Grid>
             </div>           
         )
