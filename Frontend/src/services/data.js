@@ -69,7 +69,7 @@ const DataService = {
     // обновить существующую тренировку
     trainingupdate(userid, id, data) {
         return instance.put(`/training/${id}`, {...data, user_id: userid})
-    },
+    },   
 
     // получить упражнение по id
     exercise(id) {
