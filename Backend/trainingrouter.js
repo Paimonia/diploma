@@ -205,7 +205,7 @@ const createorupdate = async (req, res, id) => {
       training_id: id,
       exercise_id: e.exercise_id,
       work_time: e.work_time,
-      worked_time: 0,
+      worked_time: e.worked_time ?? 0,
       order: i,
       completion_rest_time: e.completion_rest_time
     })

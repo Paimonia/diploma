@@ -35,6 +35,8 @@ class TrainingExecute extends React.Component {
                 return
             }
 
+            let saveRequired = false
+
             let {isComplete, nextexercise, currentexercise, currenttrainingexercise, isResting, restTimeLeft} = {...this.state}
             if (isResting) {
                 // идёт отдых
@@ -56,13 +58,22 @@ class TrainingExecute extends React.Component {
             {
                 // фаза выполнения упражнения 
                 if (currenttrainingexercise.worked_time++ >= currenttrainingexercise.work_time) {
+                    saveRequired = true
                     currenttrainingexercise.worked_time = currenttrainingexercise.work_time
                     isResting = true
                     restTimeLeft = currenttrainingexercise.completion_rest_time
                 }
             }
 
-            this.setState({isComplete, nextexercise, currentexercise, currenttrainingexercise, isResting, restTimeLeft})
+            this.setState({isComplete, nextexercise, currentexercise, currenttrainingexercise, isResting, restTimeLeft},
+                () => {
+                    if (saveRequired) {
+                        // сохраняю текущее состояние выполнения упражнения 
+                        DataService.trainingupdate(AuthService.userId, this.props.params.id, this.state.training)
+                            .then(e => {}, (error) => {                
+                                alert(error.response?.data?.error || error.message)
+                     })
+                    }})
 
         }, 1000)
 
