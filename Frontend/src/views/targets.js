@@ -59,7 +59,7 @@ export default class Targets extends React.Component {
                             <h2>Завершённые цели</h2>            
                         </Grid>
                         <Grid item xs="12">
-                            <Button variant="contained" sx={{m: 2}} onClick={() => this.uploadData()}>Показать</Button>
+                            <Button variant="contained" onClick={ () => { alert("Показываю!")}}>Показать</Button>
                             <DatePicker format="DD.MM.YYYY"/>&nbsp;—&nbsp;
                             <DatePicker format="DD.MM.YYYY"/>                                                
                         </Grid>
